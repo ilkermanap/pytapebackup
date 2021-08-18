@@ -1,13 +1,15 @@
-
+import os
+from datetime import datetime
 
 class TapeDevice:
-    def __init__(self, device):
+    def __init__(self, device, tempdir="/tmp"):
         """
         Create a tape device class.
         This will be the class that communicates with actual device
         """
         self.device = device
         self.tape = None
+        self.temp = tempdir
 
     def load(self):
         """
@@ -15,6 +17,15 @@ class TapeDevice:
         update the self.tape with a Tape instance
         """
         pass
+
+    def position_tape(self, blockno):
+        cmd = f"mt -f {self.device} rewind; mt -f {self.device} fsf {blockno}"
+        os.system(cmd)
+    
+    def load_block(self, blockno, fname=None):
+        if fname == None:
+            fname = self.temp + "/" + datetime.now().strftime("%Y%m%d%_%H%M%S.tar")
+            
     
 class Tape:
     def __init__(self, tapeid=None):

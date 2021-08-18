@@ -8,6 +8,7 @@ This library will try to use tape devices listed at /dev directory. For linux, t
 /dev/stX  /dev/nstX, for Freebsd, /dev/saX   /dev/nsaX.
 
 Library depends on the operating system for accessing the tape through device files.
+Positioning on tape requires mt utility.
 
 
 ## Tape Structure

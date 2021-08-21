@@ -21,23 +21,26 @@ except:
     from crypto import Random
 
 class AESText:
-    def __init__( self, key ):
-        if len(key) > 32:
-            self.key = key[:32]
-        else:
-            self.key = key
+    def __init__( self, key_ ):
+        if len(key_) < 32:
+            key_ = key_ * 32
 
+        if len(key_) > 32:
+            self.key = key_[:32]
+        else:
+            self.key = key_
+            
     def encrypt( self, raw ):
         raw = pad(raw)
-        iv = Random.new().read( AES.block_size )
-        cipher = AES.new( self.key, AES.MODE_CBC, iv )
-        return base64.b64encode( iv + cipher.encrypt( raw ) )
+        iv = Random.new().read(AES.block_size)
+        cipher = AES.new( self.key, AES.MODE_CBC, iv)
+        return base64.b64encode(iv + cipher.encrypt(raw))
 
-    def decrypt( self, enc ):
+    def decrypt( self, enc):
         enc = base64.b64decode(enc)
         iv = enc[:16]
-        cipher = AES.new(self.key, AES.MODE_CBC, iv )
-        return unpad(cipher.decrypt( enc[16:] ))
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        return unpad(cipher.decrypt(enc[16:]))
 
 
 class MyAES:
@@ -45,18 +48,23 @@ class MyAES:
     AES file encrypt/decrypt class.
     File compressed with bzip2 before encryption.
     """
-    def __init__(self, key_, compression = True):
+    def __init__(self, key_, compression=True):
         """
         Key must be 256 bit. If the provided key is longer 
         than 256 bit, first 256 bit is used.
         """
+        if len(key_) < 32:
+            key_ = key_ * 32
+
         if len(key_) > 32:
             key_ = key_[:32]
+
         self.key_ = key_
         self.compression_ = compression
 
 
-    def encrypt(self, input_file, output_file=None, block_size=1048576, remove_source=True, max_file_size=25000000):
+    def encrypt(self, input_file, output_file=None, block_size=1048576,
+                remove_source=True, max_file_size=25000000):
         if PYVER == 3:
             iv = bytes([random.randint(0, 0xFF) for i in range(16)])
         else:
@@ -114,7 +122,8 @@ class MyAES:
             os.remove(input_file)
 
 
-    def decrypt(self, input_file, output_file=None, block_size= 1048576, remove_source = False):
+    def decrypt(self, input_file, output_file=None,
+                block_size= 1048576, remove_source = False):
         if output_file is None:
             output_file = os.path.splitext(input_file)[0]
 
@@ -143,6 +152,10 @@ class MyAES:
 
 if __name__ == "__main__":
     anahtar = "1" * 64
-    s = MyAES(anahtar, compression=False)
-    s.encrypt("testfile")
-    s.decrypt("testfile.enc", "deneme")
+    #s = MyAES(anahtar, compression=False)
+    #s.encrypt("testfile")
+    #s.decrypt("testfile.enc", "deneme")
+    q = AESText("deneme"*10)
+    enc = q.encrypt("Test")
+    print(enc)
+    print(q.decrypt(enc))

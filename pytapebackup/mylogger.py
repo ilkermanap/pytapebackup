@@ -1,5 +1,5 @@
 import time, sys
-from myaes import *
+from .myaes import *
 from hashlib import sha256
 
 class Logger:
